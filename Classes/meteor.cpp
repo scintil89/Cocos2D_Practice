@@ -26,8 +26,6 @@ bool CMeteor::init()
 
 Rect CMeteor::returnHitBox()
 {
-
-	auto spear = this;
 	auto spear_spr = this->getChildByTag(TAG_SPRITE_METEOR);
 
 	HitBox = spear_spr->getBoundingBox();
@@ -64,7 +62,8 @@ int CMeteor::randumSpawn()
 	// 320 / 8 = 40
 
 	int ySize = Director::getInstance()->getWinSize().height;
-	int yInterval = ySize / 8; // 40
+	int yInterval = 0;
+	yInterval = ySize / 8; // 40
 
 	srand((unsigned)time(NULL));
 	int ran = rand() % 2 + 1; // 1 2 3 4 5 6 7 8

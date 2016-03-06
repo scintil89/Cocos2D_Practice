@@ -12,6 +12,7 @@ class CMeteor : public CBullet
 public:
 	CMeteor();
 	~CMeteor();
+	CREATE_FUNC(CMeteor);
 
 	virtual bool init();
 	

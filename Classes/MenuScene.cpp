@@ -86,7 +86,6 @@ void MenuScene::initMenu()
 	auto menu2 = Menu::create(stage_4, stage_5, stage_6, NULL);
 	auto menu3 = Menu::create(stage_7, stage_8, stage_9, NULL);
 
-
 	menu1->setPosition(Director::getInstance()->getWinSize().width / 2,
 		Director::getInstance()->getWinSize().height * 8 / 10);
 	menu1->alignItemsHorizontallyWithPadding(20);
@@ -113,8 +112,8 @@ void MenuScene::menuCallback(Ref* sender)
 	{
 	case STAGE_1:
 	{
-		auto Scene = TransitionFadeTR::create(1.0, GameScene::createScene());
-		Director::getInstance()->replaceScene(Scene);
+		Scene* pScene = TransitionFadeTR::create(1.0, GameScene::createScene());
+		Director::getInstance()->replaceScene(pScene);
 	}
 		break;
 
@@ -122,12 +121,12 @@ void MenuScene::menuCallback(Ref* sender)
 	{
 		auto Scene = TransitionFadeTR::create(1.0, TitleScene::createScene());
 		Director::getInstance()->replaceScene(Scene);
-	}
+	}	
 		break;
 
 	case STAGE_3:
 	{
-		auto Scene = TransitionFadeTR::create(1.0, TitleScene::createScene());
+ 		auto Scene = TransitionFadeTR::create(1.0, TitleScene::createScene());
 		Director::getInstance()->replaceScene(Scene);
 	}
 		break;

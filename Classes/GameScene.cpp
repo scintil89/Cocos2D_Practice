@@ -1,35 +1,13 @@
 #include "GameScene.h"
 #include "GameSceneManager.h"
+#include "MenuScene.h"
 
-GameScene::GameScene()
+GameScene::GameScene() : gameover(false)
 {
 }
 
 GameScene::~GameScene()
 {
-	if (pElie)
-	{
-		delete pElie;
-		pElie = nullptr;
-	}
-
-	if (pSpear)
-	{
-		delete pSpear;
-		pSpear = nullptr;
-	}
-
-	if (pMeteor)
-	{
-		delete pMeteor;
-		pMeteor = nullptr;
-	}
-
-	if (pFAK)
-	{
-		delete pFAK;
-		pFAK = nullptr;
-	}
 }
 
 
@@ -61,29 +39,20 @@ bool GameScene::init()
 	initElieLife();
 
 	// elie 
-	pElie = new CElie();
-	pElie->autorelease();
-	pElie->init();
-	this->addChild(pElie, 2);
-	pElie->initELIEdata();
+	Elie = CElie::create();
+	this->addChild(Elie, 2);
 
 	// spear 
-	pSpear = new CSpear();
-	pSpear->autorelease();
-	pSpear->init();
+	pSpear = CSpear::create();
 	this->addChild(pSpear, 1);
 
 	// Meteor
- 	pMeteor = new CMeteor();
- 	pMeteor->autorelease();
- 	pMeteor->init();
- 	this->addChild(pMeteor);
+	pMeteor = CMeteor::create();
+ 	this->addChild(pMeteor, 1);
 
 	//First Aid Kit
-	pFAK = new CFirstAidKit();
-	pFAK->autorelease();
-	pFAK->init();
-	this->addChild(pFAK, 2);
+	pFAK = CFirstAidKit::create();
+	this->addChild(pFAK, 1);
 
 	// 충돌 체크를 위한 update 메소드 호출
 	this->scheduleUpdate();
@@ -114,14 +83,30 @@ void GameScene::initBG()
 
 bool GameScene::onTouchBegan(Touch *touch, Event *unused_event)
 {
-	if (pElie->isJump == false) //hp<=0 일때 점프 안되도록 수정
+	if (isGameOver())
 	{
-		pElie->Jump();
+		Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+
+		Scene* pScene = TransitionFadeTR::create(1.0, MenuScene::createScene());
+		Director::getInstance()->replaceScene(pScene);
+		return false;
 	}
 	else
 	{
-		if (pElie->isDoubleJump == false)
-			pElie->DoubleJump();			
+		if (Elie->isElieLive())
+		{
+			if (!Elie->isJump())
+			{
+				Elie->Jump();
+			}
+			else
+			{
+				if (!Elie->isDoubleJump())
+				{
+					Elie->DoubleJump();
+				}
+			}
+		}
 	}
 	return true;
 }
@@ -151,8 +136,12 @@ void GameScene::update(float delta)
 	//auto sprSPEAR = this->getChildByTag(TAG_SPRITE_SPEAR);
 	//Rect rectSPEAR = sprSPEAR->getBoundingBox();
 
-	Rect elieBox = pElie->returnHitBox();
-
+	if (!Elie->isElieLive())
+	{
+		return;
+	}
+	
+	Rect elieBox = Elie->returnHitBox();
 	if (pSpear->getChildByTag(TAG_SPRITE_SPEAR) != NULL)
 	{
 		Rect spearBox = pSpear->returnHitBox();
@@ -167,7 +156,7 @@ void GameScene::update(float delta)
 			pSpear->getChildByTag(TAG_SPRITE_SPEAR)->runAction(RemoveSelf::create());
 			// 소멸
 
-			pElie->Hit(); // hp--
+			Elie->Hit(); // hp--
 			minusElieLife();
 		}
 	}
@@ -185,7 +174,7 @@ void GameScene::update(float delta)
 			pMeteor->getChildByTag(TAG_SPRITE_METEOR)->runAction(RemoveSelf::create());
 			//소멸
 
-			pElie->Hit(); // hp--
+			Elie->Hit(); // hp--
 			minusElieLife();
 		}
 	}
@@ -198,14 +187,15 @@ void GameScene::update(float delta)
 		{
 			pFAK->getChildByTag(TAG_SPRITE_FAK)->runAction(RemoveSelf::create()); // 소멸
 			
-			pElie->plusLife(); // hp++
+			Elie->plusLife(); // hp++
 			plusElieLife();
 		}
 	}
 		
-	if ( !pElie->isElieLive() ) // hp <= 0
+	if ( !Elie->isElieLive() ) // hp <= 0
 	{
-		pElie->Die();
+		Elie->Die();
+		
 		GameOver();
 		//Director::getInstance()->pause();
 	}
@@ -217,6 +207,25 @@ void GameScene::GameOver()
 	auto spr = Sprite::create("GameOver.png");
 	spr->setAnchorPoint(Point::ZERO);
 	this->addChild(spr, 4);
+
+	gameover = true;
+}
+
+bool GameScene::isGameOver()
+{
+	if (gameover)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void GameScene::resetGameOver()
+{
+	gameover = false;
 }
 
 void GameScene::initElieLife()
@@ -241,7 +250,7 @@ void GameScene::minusElieLife()
 {
 	auto minusLife = FadeOut::create(0.5);
 
-	switch (pElie->returnLife())
+	switch (Elie->returnLife())
 	{
 	case 0:
 		this->getChildByTag(tag1)->runAction(minusLife);
@@ -260,7 +269,7 @@ void GameScene::plusElieLife()
 {
 	auto plusLife = FadeIn::create(0.5);
 
-	switch (pElie->returnLife())
+	switch (Elie->returnLife())
 	{
 	case 1:
 		this->getChildByTag(tag1)->runAction(plusLife);

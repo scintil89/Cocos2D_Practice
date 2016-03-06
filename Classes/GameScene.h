@@ -24,7 +24,7 @@ public:
 	virtual bool init();
 	CREATE_FUNC(GameScene);
 
-	CElie* pElie;
+	CElie* Elie;
 	CSpear* pSpear;
 	CMeteor* pMeteor;
 	CFirstAidKit* pFAK;
@@ -39,6 +39,11 @@ public:
 
 	void update(float delta);
 	void GameOver();
+	bool isGameOver();
+	void resetGameOver();
+
+private:
+	bool gameover;
 };
 
 #endif

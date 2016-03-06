@@ -11,6 +11,7 @@ class CFirstAidKit : public CBullet
 public:
 	CFirstAidKit();
 	~CFirstAidKit();
+	CREATE_FUNC(CFirstAidKit);
 
 	virtual bool init();
 	virtual	Rect returnHitBox();
