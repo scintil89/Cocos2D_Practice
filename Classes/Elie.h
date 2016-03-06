@@ -5,10 +5,8 @@
 
 USING_NS_CC;
 
-#define TAG_SPRITE_ELIE			0
-#define TAG_SPRITE_ELIE_DIE		1
-#define TAG_JUMP				2
-#define TAG_DOUBLE_JUMP			3
+#define TAG_SPRITE_ELIE		0
+#define TAG_JUMP			1
 
 class CElie : public Node
 {
@@ -16,10 +14,12 @@ public:
 	CElie();
 	~CElie();
 
-	CREATE_FUNC(CElie);
+	//CREATE_FUNC(CElie);
 
 	virtual bool init();
 	//virtual bool initWithTexture();
+
+	void initELIEdata();
 
 	bool isElieLive();
 	void Hit();
@@ -29,10 +29,12 @@ public:
 	void Die();
 
 	// jump
+	bool isJump;
+	bool isDoubleJump;
+
 	void Jump();
 	void DoubleJump();
-	bool isJump();
-	bool isDoubleJump();
+
 	void nowJumping();
 	void nowDoubleJumping();
 
@@ -44,13 +46,9 @@ public:
 
 	Point returnNowPoint();
 	
-private:
+protected:
 	int life;
 	Rect HitBox;
-
-	bool jump;
-	bool doublejump;
-
 };
 
 #endif

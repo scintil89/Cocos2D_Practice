@@ -1,11 +1,8 @@
 #include "Elie.h"
 
 
-CElie::CElie() 
+CElie::CElie()
 {
-	life = 3;
-	jump = false;
-	doublejump = false;
 }
 
 
@@ -32,6 +29,13 @@ bool CElie::init()
 	return true;
 }
 
+void CElie::initELIEdata()
+{
+	life = 3;
+	isJump = false;
+	isDoubleJump = false;
+}
+
 bool CElie::isElieLive()
 {
 	if (life > 0)
@@ -50,10 +54,12 @@ int CElie::returnLife()
 	return life;
 }
 
+
 void CElie::resetLife()
 {
 	life = 3;
 }
+
 
 void CElie::plusLife()
 {
@@ -65,15 +71,8 @@ void CElie::plusLife()
 
 void CElie::Die()
 {
-	if (this->getActionByTag(TAG_JUMP))
-	{
-		this->stopActionByTag(TAG_JUMP);
-	}
-	if (this->getActionByTag(TAG_DOUBLE_JUMP))
-	{
-		this->stopActionByTag(TAG_DOUBLE_JUMP);
-	}
-	this->removeAllChildren();
+	auto elie = this->getChildByTag(TAG_SPRITE_ELIE);
+	elie->setVisible(false);
 
 	Sprite* spr = Sprite::create("elie_die.png");
 	spr->setAnchorPoint(Point(0.5, 0));
@@ -83,6 +82,7 @@ void CElie::Die()
 	this->setAnchorPoint(Point(0.5, 0));
 	this->setPosition(Point(50, 20));
 }
+
 
 void CElie::Jump()
 {
@@ -99,35 +99,33 @@ void CElie::Jump()
 void CElie::DoubleJump()
 {
 	nowDoubleJumping();
-	this->stopActionByTag(TAG_JUMP);
 
 	auto DoubleJump1 = JumpTo::create(0.7, Point(50, 20), 120, 1);
 	auto DoubleJump2 = Sequence::create(DoubleJump1, CallFunc::create(CC_CALLBACK_0(CElie::resetDoubleJump, this)), NULL);
 
-	DoubleJump2->setTag(TAG_DOUBLE_JUMP);
-
+	this->stopActionByTag(TAG_JUMP);
 	this->runAction(DoubleJump2);
 }
 
 void CElie::nowJumping()
 {
-	jump = true;
+	isJump = true;
 }
 
 void CElie::nowDoubleJumping()
 {
-	doublejump = true;
+	isDoubleJump = true;
 }
 
 void CElie::resetJump()
 {
-	jump = false;
+	isJump = false;
 }
 
 void CElie::resetDoubleJump()
 {
-	jump = false;
-	doublejump = false;
+	isJump = false;
+	isDoubleJump = false;
 }
 
 Rect CElie::returnHitBox()
@@ -146,31 +144,8 @@ Rect CElie::returnHitBox()
 	return HitBox;
 }
 
+
 Point CElie::returnNowPoint()
 {
 	return 	this->getChildByTag(TAG_SPRITE_ELIE)->getPosition();
-}
-
-bool CElie::isJump()
-{
-	if (jump)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool CElie::isDoubleJump()
-{
-	if (doublejump)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
 }

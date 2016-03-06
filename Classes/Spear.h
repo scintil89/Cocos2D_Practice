@@ -7,6 +7,8 @@
 // elie point : 50 , 20
 // jump max : 120
 
+
+
 USING_NS_CC;
 
 class CSpear : public CBullet
@@ -14,8 +16,6 @@ class CSpear : public CBullet
 public:
 	CSpear();
 	~CSpear();
-
-	CREATE_FUNC(CSpear);
 
 	virtual bool init();
 	virtual	Rect returnHitBox();
